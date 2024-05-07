@@ -4,7 +4,7 @@ from registrationpages import RegistrationPages
 from AES import *
 from RSA import *
 
-SERVER_IP = "10.100.102.22"
+SERVER_IP = "127.0.0.1"
 SERVER_PORT = 5555
 
 
