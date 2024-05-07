@@ -1,5 +1,6 @@
 
 
 # ignore all file
+/Game/__pycache__/
 /__pycache__/
 /.idea/
