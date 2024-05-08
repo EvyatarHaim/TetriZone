@@ -3,7 +3,7 @@ from exceptions import InvalidMessage
 from AES import *
 from RSA import *
 
-MESSAGE_MAX_LENGTH = 5
+MESSAGE_MAX_LENGTH = 10
 
 
 def encode_massage(message: str) -> bytes:

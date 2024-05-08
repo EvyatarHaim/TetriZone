@@ -217,24 +217,28 @@ class RegistrationPages:
 
     def submit_function(self, first_name: str, age: str, username: str, password: str, confirm_password: str):
         if password != confirm_password:
-            error_message = "It is not the same password"
+            error_message = "Passwords do not match"
             self.display_error(error_message)
             return
 
-        if first_name == "" or age == "" or username == "" or password == "" or confirm_password == "":
-            error_message = "One or more entries are empty"
+        if first_name == "" or age == "" or username == "" or password == "":
+            error_message = "One or more fields are empty"
             self.display_error(error_message)
             return
 
-        server_response = ClientFunctions(self.client_socket, key=self.key).handle_registry(name=first_name, age=age,
-                                                                                            username=username,
-                                                                                            password=password)
+        server_response = ClientFunctions(self.client_socket, key=self.key).handle_registry(
+            name=first_name, age=age, username=username, password=password)
+
+        # Check if the response is a success message
         if server_response != "[SERVER:] User have created successfully":
-            error_message = server_response[4:]
+            error_message = server_response[4:]  # Removing "[SERVER:]" prefix
             self.display_error(error_message)
             return
 
+        # If registration is successful, open the menu and close the current window
         self.master.destroy()
         root_window = customtkinter.CTk()
         Menu(client_socket=self.client_socket, master=root_window, username=username, key=self.key)
         root_window.mainloop()
+
+

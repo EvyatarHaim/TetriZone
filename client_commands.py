@@ -28,17 +28,6 @@ class ClientFunctions:
         server_response = recv_message(self.client_socket, key=self.key)
         return server_response
 
-    # def get_leaderboard_headers(self):
-    #     message = "Leaderboard_Headers|"
-    #     try:
-    #         send_message(message, self.client_socket)
-    #     except ExitException as err:
-    #         return err
-    #
-    #     server_response = recv_message(self.client_socket)
-    #     headers: list = server_response.split(' ')
-    #     return headers
-
     def get_leaderboard_data(self):
         message = "Leaderboard_Data|"
         try:
@@ -62,4 +51,14 @@ class ClientFunctions:
                     print(f"[!] Error converting '{item}' to tuple: {e}")
 
         return tuples
+
+    def update_status(self, username: str, status: int):
+        message = f"Update_Status|{username}|{status}"
+        try:
+            send_message(message, self.client_socket, key=self.key)
+        except ExitException as err:
+            return err
+
+        server_response = recv_message(self.client_socket, key=self.key)
+        return server_response
 

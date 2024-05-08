@@ -2,7 +2,6 @@ import socket
 import customtkinter
 from PIL import ImageTk, Image
 
-
 from Game.tetris import tetris_game
 from client_commands import ClientFunctions
 
@@ -17,17 +16,23 @@ class Menu:
         self.master.title("TetrisGame- Menu")
         self.master.resizable()
 
-        # width = self.master.winfo_width()
-        # height = self.master.winfo_height()
-
-        # background_image = ImageTk.PhotoImage(Image.open("Icons/tetris_block_bg_v3.png").resize((1200, 300)))
-        # background_image = customtkinter.CTkLabel(master=self.master, image=background_image, text="")
-        # background_image.pack(side='bottom')
+        self.master.protocol("WM_DELETE_WINDOW", lambda: self.master_window_closed(self.client_socket, self.key,
+                                                                                   self.username))
 
         self.base_frame = customtkinter.CTkFrame(master=self.master, fg_color='#919191')
         self.base_frame.pack(fill='both', expand=True)
 
         self.home_page()
+
+    def master_window_closed(self, client_socket: socket, key, username):
+        server_response = ClientFunctions(client_socket=client_socket, key=key).update_status(username=username,
+                                                                                              status=0)
+
+        server_response_list = server_response.split('|')
+        status: int = int(server_response_list[2])
+
+        if status == 0:
+            self.master.destroy()
 
     def home_page(self):
         for widget in self.base_frame.winfo_children():
@@ -64,10 +69,6 @@ class Menu:
 
         leaderboard_frame = customtkinter.CTkFrame(master=self.base_frame, fg_color='#418688')
         leaderboard_frame.pack(pady=20)
-
-
-        # headers: list = ClientFunctions(self.client_socket).get_leaderboard_headers()
-        # headers.insert(0, "place")
 
         headers: list = ["Placement", "Username", "Last Game Score", "Highest Score"]
         data_rows: list = ClientFunctions(self.client_socket, key=self.key).get_leaderboard_data()

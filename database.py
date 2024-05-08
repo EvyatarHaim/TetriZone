@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS users (
     user_name VARCHAR(255) NOT NULL,
     first_name VARCHAR(255) NOT NULL,
     age VARCHAR(255) NOT NULL,
-    password VARCHAR(255) NOT NULL
+    password VARCHAR(255) NOT NULL,
+    is_online INTEGER NOT NULL DEFAULT 0
 )
 """)
 
@@ -37,6 +38,8 @@ CREATE TEMP TABLE ranked_scores AS SELECT
 cursor.execute("""
 UPDATE scores SET placement = ( SELECT placement FROM ranked_scores WHERE scores.user_name = ranked_scores.user_name
 )""")
+
+# cursor.execute("ALTER TABLE users ADD COLUMN is_online INTEGER NOT NULL DEFAULT 0")
 
 connection.commit()
 connection.close()

@@ -16,11 +16,11 @@ class ServerFunctions:
             "Login": self.login,
             "Register": self.register,
             "Score": self.score,
-            # "Leaderboard_Headers": self.leaderboard_headers,
-            "Leaderboard_Data": self.leaderboard_data
+            "Leaderboard_Data": self.leaderboard_data,
+            "Update_Status": self.update_status
         }
         client_command = info.split('|')[0]
-        if client_command != "Leaderboard_Headers" and client_command != "Leaderboard_Data":
+        if client_command != "Leaderboard_Data":
             self.server_commands[client_command](info)
         else:
             self.server_commands[client_command]()
@@ -53,6 +53,18 @@ class ServerFunctions:
             send_message("[!] The password is incorrect", self.client_socket, key=self.key)
             return
 
+        # Check if the user is online
+        cursor.execute("SELECT is_online FROM users WHERE user_name=?", (username,))
+        status = cursor.fetchone()
+
+        if status == 1:  # 1 == True
+            connection.close()
+            send_message("[!] This user is already connected", self.client_socket, key=self.key)
+            return
+        else:
+            # The login now as been approved, so we update is_online to 1
+            cursor.execute("UPDATE users SET is_online=? WHERE user_name=? ", (1, username))
+
         connection.commit()
         connection.close()
         send_message("[SERVER:] Login successfully", self.client_socket, key=self.key)
@@ -75,8 +87,8 @@ class ServerFunctions:
             send_message("[!] This username is already taken", self.client_socket, key=self.key)
             return
 
-        cursor.execute("INSERT INTO users (user_name, first_name, age, password) VALUES(?, ?, ?, ?)",
-                       (username, first_name, age, password))
+        cursor.execute("INSERT INTO users (user_name, first_name, age, password, is_online) VALUES(?, ?, ?, ?, ?)",
+                       (username, first_name, age, password, 1))
 
         connection.commit()
         connection.close()
@@ -139,4 +151,23 @@ class ServerFunctions:
         connection.close()
 
         send_message(str_data_rows, self.client_socket, key=self.key)
+
+    def update_status(self, info: str):
+        info_list = info.split('|')
+
+        username: str = info_list[1]
+        status: int = int(info_list[2])
+
+        connection = sqlite3.connect('TetrisGame.db')
+        cursor = connection.cursor()
+
+        cursor.execute("UPDATE users SET is_online=? WHERE user_name=? ", (status, username))
+
+        connection.commit()
+        connection.close()
+        send_message(f"[SERVER:] (username, status)|{username}|{str(status)}",
+                     self.client_socket, key=self.key)
+        return
+
+
 
