@@ -1,6 +1,16 @@
 import sqlite3
 
 
+def reset_status():
+    reset_connection = sqlite3.connect('TetrisGame.db')
+    reset_cursor = reset_connection.cursor()
+
+    reset_cursor.execute("UPDATE users SET is_online = 0")
+    print("Reset all the is_online values to 0")
+    reset_connection.commit()
+    reset_connection.close()
+
+
 connection = sqlite3.connect('TetrisGame.db')
 cursor = connection.cursor()
 
@@ -41,7 +51,11 @@ UPDATE scores SET placement = ( SELECT placement FROM ranked_scores WHERE scores
 
 # cursor.execute("ALTER TABLE users ADD COLUMN is_online INTEGER NOT NULL DEFAULT 0")
 
+
 connection.commit()
 connection.close()
 
 print("Scores table have been updated and the placement column is now based on the highest_score.")
+
+if __name__ == '__main__':
+    reset_status()

@@ -60,15 +60,31 @@ class Menu:
     def leaderboard(self):
         for widget in self.base_frame.winfo_children():
             widget.destroy()
-        image = ImageTk.PhotoImage(Image.open("Icons/home_FILL1_wght400_GRAD0_opsz24.png").resize((40, 40)))
-        return_home_button = customtkinter.CTkButton(master=self.base_frame, text="", height=30, corner_radius=5,
-                                                     fg_color='transparent', image=image, width=40,
+
+        icons_frame = customtkinter.CTkFrame(master=self.base_frame)
+        icons_frame.pack(fill='both')
+        home_image = ImageTk.PhotoImage(Image.open("Icons/home_FILL1_wght400_GRAD0_opsz24.png").resize((40, 40)))
+        return_home_button = customtkinter.CTkButton(master=icons_frame, text="", height=30, corner_radius=5,
+                                                     fg_color='transparent', image=home_image, width=40,
 
                                                      text_color='black', font=('Helvetica', 18), command=self.home_page)
-        return_home_button.pack(anchor='nw', pady=10)
+        return_home_button.pack(anchor='n', pady=10, side='left')
 
         leaderboard_frame = customtkinter.CTkFrame(master=self.base_frame, fg_color='#418688')
         leaderboard_frame.pack(pady=20)
+        self.show_leaderboard(leaderboard_frame)
+
+        refresh_image = ImageTk.PhotoImage(Image.open("Icons/Refresh_icon.png").resize((40, 40)))
+        return_home_button = customtkinter.CTkButton(master=icons_frame, text="", height=30, corner_radius=5,
+                                                     fg_color='transparent', image=refresh_image, width=40,
+
+                                                     text_color='black', font=('Helvetica', 18),
+                                                     command=lambda: self.show_leaderboard(leaderboard_frame))
+        return_home_button.pack(side='left', anchor='n', pady=10, padx=20)
+
+    def show_leaderboard(self, leaderboard_frame):
+        for widget in leaderboard_frame.winfo_children():
+            widget.destroy()
 
         headers: list = ["Placement", "Username", "Last Game Score", "Highest Score"]
         data_rows: list = ClientFunctions(self.client_socket, key=self.key).get_leaderboard_data()

@@ -56,8 +56,9 @@ class ServerFunctions:
         # Check if the user is online
         cursor.execute("SELECT is_online FROM users WHERE user_name=?", (username,))
         status = cursor.fetchone()
+        print("Status", status)
 
-        if status == 1:  # 1 == True
+        if status[0] == 1:  # 1 == True
             connection.close()
             send_message("[!] This user is already connected", self.client_socket, key=self.key)
             return
