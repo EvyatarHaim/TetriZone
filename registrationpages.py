@@ -51,7 +51,7 @@ class RegistrationPages:
         title_frame = customtkinter.CTkFrame(master=self.base_frame, fg_color='#232124', corner_radius=10)
         title_frame.pack(pady=10, fill='both')
         title_label = customtkinter.CTkLabel(master=title_frame, text="LOGIN", text_color='#e4e2e5',
-                                             font=('Poppins Black', 36))
+                                             font=('Poppins Black', 42))
         title_label.pack(side='top', anchor='center', pady=20)
 
         margin = customtkinter.CTkFrame(master=self.base_frame, fg_color='#232124', height=75)
@@ -126,7 +126,7 @@ class RegistrationPages:
         title_frame = customtkinter.CTkFrame(master=self.base_frame, fg_color='#232124', corner_radius=10)
         title_frame.pack(pady=10, fill='both')
         title_label = customtkinter.CTkLabel(master=title_frame, text="SIGN UP", text_color='#e4e2e5',
-                                             font=('Poppins Black', 36))
+                                             font=('Poppins Black', 42))
         title_label.pack(side='top', anchor='center', pady=20)
 
         entry_frame = customtkinter.CTkFrame(master=self.base_frame, fg_color='#232124')
