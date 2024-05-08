@@ -3,3 +3,5 @@
 Game/__pycache__/
 /__pycache__/
 /.idea/
+database.py
+TetrisGame.db
