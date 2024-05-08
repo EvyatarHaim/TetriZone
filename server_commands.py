@@ -31,6 +31,10 @@ class ServerFunctions:
         username: str = info_list[1]
         password = hashing_string(info_list[2])
 
+        if username == "" or password == "":
+            send_message("[!] One or more entries are empty", self.client_socket, key=self.key)
+            return
+
         connection = sqlite3.connect('TetrisGame.db')
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM users WHERE user_name=?", (username,))
