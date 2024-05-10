@@ -12,12 +12,14 @@ class ServerFunctions:
     def __init__(self, client_socket: socket, info: str, key):
         self.client_socket = client_socket
         self.key = key
+
         self.server_commands: dict = {
             "Login": self.login,
             "Register": self.register,
             "Score": self.score,
             "Leaderboard_Data": self.leaderboard_data,
-            "Update_Status": self.update_status
+            "Update_Status": self.update_status,
+            "Get_Status": self.get_status
         }
         client_command = info.split('|')[0]
         if client_command != "Leaderboard_Data":
@@ -56,7 +58,6 @@ class ServerFunctions:
         # Check if the user is online
         cursor.execute("SELECT is_online FROM users WHERE user_name=?", (username,))
         status = cursor.fetchone()
-        print("Status", status)
 
         if status[0] == 1:  # 1 == True
             connection.close()
@@ -144,9 +145,9 @@ class ServerFunctions:
             data_rows.append(str(row))
 
         # When there is not 10 scores it will add row with nothing on them so the table will stay the same all the time
-        if len(data_rows) < 10:
-            for _ in range(0, 10 - len(data_rows)):
-                data_rows.append("('', '', '', '' )")
+        # if len(data_rows) < 10:
+        #     for _ in range(0, 10 - len(data_rows)):
+        #         data_rows.append("('', '', '', '' )")
 
         str_data_rows: str = str(' '.join(data_rows))
         connection.close()
@@ -170,5 +171,22 @@ class ServerFunctions:
                      self.client_socket, key=self.key)
         return
 
+    def get_status(self, info: str):
+        info_list = info.split('|')
 
+        username: str = info_list[1]
 
+        connection = sqlite3.connect('TetrisGame.db')
+        cursor = connection.cursor()
+        cursor.execute("SELECT is_online FROM users WHERE user_name=?", (username,))
+        status: int = int(cursor.fetchone()[0])
+
+        str_status = ""
+        if status == 1:
+            str_status = "Online"
+        if status == 0:
+            str_status = "Disconnected"
+
+        connection.commit()
+        connection.close()
+        send_message(f"[SERVER:] (username, status)|{username}|{str_status}", self.client_socket, key=self.key)

@@ -62,3 +62,14 @@ class ClientFunctions:
         server_response = recv_message(self.client_socket, key=self.key)
         return server_response
 
+    def get_status(self, username: str):
+        message = f"Get_Status|{username}"
+        try:
+            send_message(message, self.client_socket, key=self.key)
+        except ExitException as err:
+            return err
+
+        server_response = recv_message(self.client_socket, key=self.key)
+        status = server_response.split('|')[2]
+        return status
+
