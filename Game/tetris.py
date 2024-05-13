@@ -26,13 +26,13 @@ def tetris_game(client_socket: socket, username, key):
     GAME_UPDATE = pygame.USEREVENT
     pygame.time.set_timer(GAME_UPDATE, 200)
 
-    count = 0
+    counter = 0
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                message = '|'.join(["Score", username, str(game.score)])  # Score|username|score
-                send_message(message, client_socket, key)
+                # message = '|'.join(["Score", username, str(game.score)])  # Score|username|score
+                # send_message(message, client_socket, key)
             if event.type == pygame.KEYDOWN:
                 if game.game_over:
                     game.game_over = False
@@ -56,8 +56,14 @@ def tetris_game(client_socket: socket, username, key):
         screen.blit(score_surface, (365, 20, 50, 50))
         screen.blit(next_surface, (375, 180, 50, 50))
 
-        if game.game_over and count == 0:
-            count = 1
+        if game.game_over and counter == 0:
+            counter = 1
+            message = '|'.join(["Lines", username, str(game.lines)])  # Lines|username|clear lines
+            send_message(message, client_socket, key)
+
+            message = '|'.join(["Games_Played", username])  # Games_Played|username
+            send_message(message, client_socket, key)
+
             screen.blit(game_over_surface, (520, 650, 50, 50))
             message = '|'.join(["Score", username, str(game.score)])  # Score|username|score
             send_message(message, client_socket, key)

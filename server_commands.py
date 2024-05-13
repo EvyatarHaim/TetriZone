@@ -17,9 +17,12 @@ class ServerFunctions:
             "Login": self.login,
             "Register": self.register,
             "Score": self.score,
+            "Lines": self.lines,
             "Leaderboard_Data": self.leaderboard_data,
             "Update_Status": self.update_status,
-            "Get_Status": self.get_status
+            "Get_Status": self.get_status,
+            "Games_Played": self.update_games_played
+
         }
         client_command = info.split('|')[0]
         if client_command != "Leaderboard_Data":
@@ -125,10 +128,6 @@ class ServerFunctions:
             highest_score = last_score
             cursor.execute("INSERT INTO scores (user_name, last_score, highest_score) VALUES(?, ?, ?)",
                            (username, last_score, highest_score))
-        # try:
-        #     self.update_score_table()
-        # except Exception as err:
-        #     print(f"[!->] {err}")
 
         connection.commit()
         connection.close()
@@ -190,3 +189,57 @@ class ServerFunctions:
         connection.commit()
         connection.close()
         send_message(f"[SERVER:] (username, status)|{username}|{str_status}", self.client_socket, key=self.key)
+
+    def lines(self, info: str):
+        info_list = info.split('|')
+
+        username: str = info_list[1]
+        clear_lines: int = int(info_list[2])
+
+        connection = sqlite3.connect('TetrisGame.db')
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM stats WHERE user_name=?", (username,))
+        exist_user = cursor.fetchone()
+
+        if exist_user is not None:
+            # User exist in stats, so we need only to add the numbers of lines and update the lines
+            cursor.execute("SELECT lines FROM stats WHERE user_name=?", (username,))
+            lines: int = int(cursor.fetchone()[0])
+            updated_lines = lines + clear_lines
+            cursor.execute("UPDATE stats SET lines=? WHERE user_name=? ", (updated_lines, username))
+        else:
+            # Because user is not existed in stats we will insert into lines the clear_lines
+            cursor.execute("INSERT INTO stats (user_name, lines) VALUES(?, ?)",
+                           (username, clear_lines))
+
+        connection.commit()
+        connection.close()
+        print(f"[*] Lines has been updated")
+        return
+
+    def update_games_played(self, info):
+        info_list = info.split('|')
+
+        username: str = info_list[1]
+
+        connection = sqlite3.connect('TetrisGame.db')
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM stats WHERE user_name=?", (username,))
+        exist_user = cursor.fetchone()
+
+        if exist_user is not None:
+            # User exist in stats, so we need only to add the numbers of lines and update the lines
+            cursor.execute("SELECT games_played FROM stats WHERE user_name=?", (username,))
+            games_played: int = int(cursor.fetchone()[0])
+            updated_games_played = games_played + 1
+            cursor.execute("UPDATE stats SET lines=? WHERE user_name=? ", (updated_games_played, username))
+        else:
+            # Because user is not existed in stats probably it is his first game, so we will insert into 1 the
+            # games_played
+            cursor.execute("INSERT INTO stats (user_name, games_played) VALUES(?, ?)",
+                           (username, 1))
+
+        connection.commit()
+        connection.close()
+        print(f"[*] games_played has been updated")
+        return

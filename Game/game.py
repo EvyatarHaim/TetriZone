@@ -12,6 +12,7 @@ class Game:
         self.next_shape = self.get_random_shape()
         self.game_over = False
         self.score = 0
+        self.lines = 0
         self.rotate_sound = pygame.mixer.Sound("Sounds/rotate.ogg")
         self.clear_sound = pygame.mixer.Sound("Sounds/clear.ogg")
 
@@ -57,6 +58,7 @@ class Game:
         self.current_shape = self.next_shape
         self.next_shape = self.get_random_shape()
         rows_cleared = self.grid.clear_full_rows()
+        self.lines += rows_cleared
         if rows_cleared > 0:
             self.clear_sound.play()
             self.update_score(rows_cleared, 0)
@@ -101,3 +103,6 @@ class Game:
             self.next_shape.draw(screen, 255, 280)
         else:
             self.next_shape.draw(screen, 270, 270)
+
+    def get_lines(self):
+        return self.lines

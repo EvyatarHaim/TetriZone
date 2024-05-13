@@ -5,7 +5,7 @@ from AES import *
 from RSA import *
 
 SERVER_IP = "127.0.0.1"
-SERVER_PORT = 5555
+SERVER_PORT = 9999
 
 
 def client():

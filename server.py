@@ -38,7 +38,7 @@ def server():
     try:
         server_socket = socket.socket()
         print("[*] The server is up and running. Listening for connections...")
-        server_socket.bind(('0.0.0.0', 5555))
+        server_socket.bind(('0.0.0.0', 9999))
         server_socket.listen()
 
         while True:
