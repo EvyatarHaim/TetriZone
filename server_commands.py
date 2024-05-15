@@ -8,6 +8,142 @@ def hashing_string(string: str):
     return hashlib.sha256(string.encode()).hexdigest()
 
 
+def update_total_score(username: str, last_game_score: int):
+    connection = sqlite3.connect('TetrisGame.db')
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM stats WHERE user_name=?", (username,))
+    exist_user = cursor.fetchone()
+
+    if exist_user is not None:
+        # User exist in stats, so we need only to add the last game score to total_score and update the total_score
+        cursor.execute("SELECT total_score FROM stats WHERE user_name=?", (username,))
+        total_score: int = int(cursor.fetchone()[0])
+        updated_total_score: int = total_score + last_game_score
+        cursor.execute("UPDATE stats SET total_score=? WHERE user_name=? ", (updated_total_score, username))
+    else:
+        # Because user is not existed in stats probably it is his first game, so we will insert last_game_score into
+        # total_score
+        cursor.execute("INSERT INTO stats (user_name, total_score) VALUES(?, ?)",
+                       (username, last_game_score))
+
+    connection.commit()
+    connection.close()
+    print(f"[*] total_score has been updated")
+    return
+
+
+def update_games_played(username: str):
+    connection = sqlite3.connect('TetrisGame.db')
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM stats WHERE user_name=?", (username,))
+    exist_user = cursor.fetchone()
+
+    if exist_user is not None:
+        # User exist in stats, so we need only to add the numbers of lines and update the lines
+        cursor.execute("SELECT games_played FROM stats WHERE user_name=?", (username,))
+        games_played: int = int(cursor.fetchone()[0])
+        updated_games_played = games_played + 1
+        cursor.execute("UPDATE stats SET games_played=? WHERE user_name=? ", (updated_games_played, username))
+    else:
+        # Because user is not existed in stats probably it is his first game, so we will insert into 1 the
+        # games_played
+        cursor.execute("INSERT INTO stats (user_name, games_played) VALUES(?, ?)",
+                       (username, 1))
+
+    connection.commit()
+    connection.close()
+    print(f"[*] games_played has been updated")
+    return
+
+
+def score(username: str, last_score: int):
+    update_total_score(username=username, last_game_score=last_score)
+
+    connection = sqlite3.connect('TetrisGame.db')
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM scores WHERE user_name=?", (username,))
+    exist_user = cursor.fetchone()
+
+    if exist_user is not None:
+        # User exist in scores, so we need only to update the last_score
+        cursor.execute("UPDATE scores SET last_score=? WHERE user_name=? ", (last_score, username))
+        # Check if the last_score might be the highest
+        cursor.execute("SELECT highest_score FROM scores WHERE user_name=?", (username,))
+        highest_score: int = int(cursor.fetchone()[0])
+
+        if last_score > highest_score:
+            highest_score = last_score
+            cursor.execute("UPDATE scores SET highest_score=? WHERE user_name=? ",
+                           (highest_score, username))
+
+    else:
+        # Because user is not existed in scores we will insert to both last_score and highest_score
+        highest_score = last_score
+        cursor.execute("INSERT INTO scores (user_name, last_score, highest_score) VALUES(?, ?, ?)",
+                       (username, last_score, highest_score))
+
+    connection.commit()
+    connection.close()
+    print(f"[*] Score table has been updated")
+    return
+
+
+def update_lines(username: str, last_game_lines: int):
+    connection = sqlite3.connect('TetrisGame.db')
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM stats WHERE user_name=?", (username,))
+    exist_user = cursor.fetchone()
+
+    if exist_user is not None:
+        # User exist in stats, so we need to add the numbers of lines and update the lines
+        cursor.execute("SELECT lines FROM stats WHERE user_name=?", (username,))
+        current_lines: int = int(cursor.fetchone()[0])
+        updated_lines = current_lines + last_game_lines
+        cursor.execute("UPDATE stats SET lines=? WHERE user_name=? ", (updated_lines, username))
+    else:
+        # Because user is not existed in stats we will insert into lines the clear_lines
+        cursor.execute("INSERT INTO stats (user_name, lines) VALUES(?, ?)",
+                       (username, last_game_lines))
+
+    connection.commit()
+    connection.close()
+    print(f"[*] lines has been updated")
+    return
+
+
+def update_game_time(username: str, last_game_time: int):
+    connection = sqlite3.connect('TetrisGame.db')
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM stats WHERE user_name=?", (username,))
+    exist_user = cursor.fetchone()
+
+    if exist_user is not None:
+        # User exist in stats, so we need to add the numbers of seconds and update the played_time
+        cursor.execute("SELECT played_time FROM stats WHERE user_name=?", (username,))
+        current_game_time: int = int(cursor.fetchone()[0])
+        updated_time = current_game_time + last_game_time
+        cursor.execute("UPDATE stats SET played_time=? WHERE user_name=? ", (updated_time, username))
+    else:
+        # Because user is not existed in stats we will insert into played_time the last_game_time
+        cursor.execute("INSERT INTO stats (user_name, lines) VALUES(?, ?)",
+                       (username, last_game_time))
+
+    connection.commit()
+    connection.close()
+    print(f"[*] played_time has been updated")
+    return
+
+
+def format_time(seconds: int) -> str:
+    seconds = seconds % (24 * 3600)
+    hour = seconds // 3600
+    seconds %= 3600
+    minutes = seconds // 60
+    seconds %= 60
+
+    return "%d:%02d:%02d" % (hour, minutes, seconds)
+
+
 class ServerFunctions:
     def __init__(self, client_socket: socket, info: str, key):
         self.client_socket = client_socket
@@ -16,12 +152,17 @@ class ServerFunctions:
         self.server_commands: dict = {
             "Login": self.login,
             "Register": self.register,
-            "Score": self.score,
-            "Lines": self.lines,
             "Leaderboard_Data": self.leaderboard_data,
             "Update_Status": self.update_status,
             "Get_Status": self.get_status,
-            "Games_Played": self.update_games_played
+            "Game_Over": self.game_over,
+            "Get_Total_Score": self.get_total_score,
+            "Get_Total_Lines": self.get_total_lines,
+            "Get_Games_Played": self.get_games_played,
+            "Get_Played_Time": self.get_played_time,
+            "Get_Last_Game_Score": self.get_last_game_score,
+            "Get_Highest_Score": self.get_highest_score
+
 
         }
         client_command = info.split('|')[0]
@@ -73,6 +214,7 @@ class ServerFunctions:
         connection.commit()
         connection.close()
         send_message("[SERVER:] Login successfully", self.client_socket, key=self.key)
+        return
 
     def register(self, info: str):
         info_list = info.split('|')
@@ -100,40 +242,6 @@ class ServerFunctions:
         send_message("[SERVER:] User have created successfully", self.client_socket, key=self.key)
         return
 
-    def score(self, info: str):
-        info_list = info.split('|')
-
-        username: str = info_list[1]
-        last_score: int = int(info_list[2])
-
-        connection = sqlite3.connect('TetrisGame.db')
-        cursor = connection.cursor()
-        cursor.execute("SELECT * FROM scores WHERE user_name=?", (username,))
-        exist_user = cursor.fetchone()
-
-        if exist_user is not None:
-            # User exist in scores, so we need only to update the last_score
-            cursor.execute("UPDATE scores SET last_score=? WHERE user_name=? ", (last_score, username))
-            # Check if the last_score might be the highest
-            cursor.execute("SELECT highest_score FROM scores WHERE user_name=?", (username,))
-            highest_score: int = int(cursor.fetchone()[0])
-
-            if last_score > highest_score:
-                highest_score = last_score
-                cursor.execute("UPDATE scores SET highest_score=? WHERE user_name=? ",
-                               (highest_score, username))
-
-        else:
-            # Because user is not existed in scores we will insert to both last_score and highest_score
-            highest_score = last_score
-            cursor.execute("INSERT INTO scores (user_name, last_score, highest_score) VALUES(?, ?, ?)",
-                           (username, last_score, highest_score))
-
-        connection.commit()
-        connection.close()
-        print(f"[*] Score table has been updated")
-        return
-
     def leaderboard_data(self):
         connection = sqlite3.connect('TetrisGame.db')
         cursor = connection.cursor()
@@ -152,6 +260,7 @@ class ServerFunctions:
         connection.close()
 
         send_message(str_data_rows, self.client_socket, key=self.key)
+        return
 
     def update_status(self, info: str):
         info_list = info.split('|')
@@ -189,38 +298,47 @@ class ServerFunctions:
         connection.commit()
         connection.close()
         send_message(f"[SERVER:] (username, status)|{username}|{str_status}", self.client_socket, key=self.key)
-
-    def lines(self, info: str):
-        info_list = info.split('|')
-
-        username: str = info_list[1]
-        clear_lines: int = int(info_list[2])
-
-        connection = sqlite3.connect('TetrisGame.db')
-        cursor = connection.cursor()
-        cursor.execute("SELECT * FROM stats WHERE user_name=?", (username,))
-        exist_user = cursor.fetchone()
-
-        if exist_user is not None:
-            # User exist in stats, so we need only to add the numbers of lines and update the lines
-            cursor.execute("SELECT lines FROM stats WHERE user_name=?", (username,))
-            lines: int = int(cursor.fetchone()[0])
-            updated_lines = lines + clear_lines
-            cursor.execute("UPDATE stats SET lines=? WHERE user_name=? ", (updated_lines, username))
-        else:
-            # Because user is not existed in stats we will insert into lines the clear_lines
-            cursor.execute("INSERT INTO stats (user_name, lines) VALUES(?, ?)",
-                           (username, clear_lines))
-
-        connection.commit()
-        connection.close()
-        print(f"[*] Lines has been updated")
         return
 
-    def update_games_played(self, info):
+    def game_over(self, info: str):
+        info_list = info.split('|')
+
+        username = info_list[1]
+        user_score: int = int(info_list[2])
+        user_lines: int = int(info_list[3])
+        game_time: int = int(info_list[4])
+
+        score(username=username, last_score=user_score)
+        update_lines(username=username, last_game_lines=user_lines)
+        update_games_played(username=username)
+        update_game_time(username=username, last_game_time=game_time)
+        return
+
+    def get_total_score(self, info: str):
         info_list = info.split('|')
 
         username: str = info_list[1]
+        total_score = 0
+        connection = sqlite3.connect('TetrisGame.db')
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM stats WHERE user_name=?", (username,))
+        exist_user = cursor.fetchone()
+
+        if exist_user is not None:
+            # User exist in stats, so we need only to return the total_score
+            cursor.execute("SELECT total_score FROM stats WHERE user_name=?", (username,))
+            total_score = cursor.fetchone()[0]
+        # Because user is not existed in stats probably it is his first game, so the total_score will be 0
+        connection.commit()
+        connection.close()
+        send_message(str(total_score), self.client_socket, key=self.key)
+        return
+
+    def get_total_lines(self, info: str):
+        info_list = info.split('|')
+
+        username: str = info_list[1]
+        total_lines = 0
 
         connection = sqlite3.connect('TetrisGame.db')
         cursor = connection.cursor()
@@ -228,18 +346,96 @@ class ServerFunctions:
         exist_user = cursor.fetchone()
 
         if exist_user is not None:
-            # User exist in stats, so we need only to add the numbers of lines and update the lines
-            cursor.execute("SELECT games_played FROM stats WHERE user_name=?", (username,))
-            games_played: int = int(cursor.fetchone()[0])
-            updated_games_played = games_played + 1
-            cursor.execute("UPDATE stats SET lines=? WHERE user_name=? ", (updated_games_played, username))
-        else:
-            # Because user is not existed in stats probably it is his first game, so we will insert into 1 the
-            # games_played
-            cursor.execute("INSERT INTO stats (user_name, games_played) VALUES(?, ?)",
-                           (username, 1))
-
+            # User exist in stats, so we need only to return the lines
+            cursor.execute("SELECT lines FROM stats WHERE user_name=?", (username,))
+            total_lines = cursor.fetchone()[0]
+        # Because user is not existed in stats probably it is his first game, so the lines will be 0
         connection.commit()
         connection.close()
-        print(f"[*] games_played has been updated")
+        send_message(str(total_lines), self.client_socket, key=self.key)
+        return
+
+    def get_games_played(self, info: str):
+        info_list = info.split('|')
+
+        username: str = info_list[1]
+        total_games_played = 0
+
+        connection = sqlite3.connect('TetrisGame.db')
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM stats WHERE user_name=?", (username,))
+        exist_user = cursor.fetchone()
+
+        if exist_user is not None:
+            # User exist in stats, so we need only to return the games_played
+            cursor.execute("SELECT games_played FROM stats WHERE user_name=?", (username,))
+            total_games_played = cursor.fetchone()[0]
+        # Because user is not existed in stats probably it is his first game, so the games_played will be 0
+        connection.commit()
+        connection.close()
+        send_message(str(total_games_played), self.client_socket, key=self.key)
+        return
+
+    def get_played_time(self, info: str):
+        info_list = info.split('|')
+
+        username: str = info_list[1]
+        time = 0
+
+        connection = sqlite3.connect('TetrisGame.db')
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM stats WHERE user_name=?", (username,))
+        exist_user = cursor.fetchone()
+
+        if exist_user is not None:
+            # User exist in stats, so we need only to return the played_time
+            cursor.execute("SELECT played_time FROM stats WHERE user_name=?", (username,))
+            time = cursor.fetchone()[0]
+        # Because user is not existed in stats probably it is his first game, so the played_time will be 0
+        connection.commit()
+        connection.close()
+        full_time = format_time(time)
+        send_message(full_time, self.client_socket, key=self.key)
+        return
+
+    def get_last_game_score(self, info: str):
+        info_list = info.split('|')
+
+        username: str = info_list[1]
+        last_game_Score = 0
+
+        connection = sqlite3.connect('TetrisGame.db')
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM stats WHERE user_name=?", (username,))
+        exist_user = cursor.fetchone()
+
+        if exist_user is not None:
+            # User exist in scores, so we need only to return the last_score
+            cursor.execute("SELECT last_score FROM scores WHERE user_name=?", (username,))
+            last_game_Score = cursor.fetchone()[0]
+        # Because user is not existed in stats probably it is his first game, so the last_score will be 0
+        connection.commit()
+        connection.close()
+        send_message(str(last_game_Score), self.client_socket, key=self.key)
+        return
+
+    def get_highest_score(self, info:str):
+        info_list = info.split('|')
+
+        username: str = info_list[1]
+        highest_score = 0
+
+        connection = sqlite3.connect('TetrisGame.db')
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM stats WHERE user_name=?", (username,))
+        exist_user = cursor.fetchone()
+
+        if exist_user is not None:
+            # User exist in scores, so we need only to return the highest_score
+            cursor.execute("SELECT highest_score FROM scores WHERE user_name=?", (username,))
+            highest_score = cursor.fetchone()[0]
+        # Because user is not existed in stats probably it is his first game, so the highest_score will be 0
+        connection.commit()
+        connection.close()
+        send_message(str(highest_score), self.client_socket, key=self.key)
         return

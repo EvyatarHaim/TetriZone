@@ -1,9 +1,9 @@
 import socket
 import customtkinter
 from PIL import ImageTk, Image
-
 from Game.tetris import tetris_game
 from client_commands import ClientFunctions
+from database import handel_placement
 
 
 class Menu:
@@ -30,7 +30,12 @@ class Menu:
                                                      border_width=3, border_color='#746898')
         self.side_bar_frame.pack(side='left', fill='both', expand=False, padx=10)
 
-        self.menu_frame = customtkinter.CTkFrame(self.base_frame, fg_color='#232124')
+        self.main_frame = customtkinter.CTkFrame(self.base_frame, fg_color='#232124')
+        self.main_frame.pack(side='right', fill='both', expand=True)
+
+        self.display_logo(self.main_frame)
+
+        self.menu_frame = customtkinter.CTkFrame(self.main_frame, fg_color='#232124')
         self.menu_frame.pack(side='right', fill='both', expand=True)
 
         self.side_nav_bar()
@@ -45,6 +50,13 @@ class Menu:
 
         if status == 0:
             self.master.destroy()
+
+    def display_logo(self, frame):
+        logo_icon = ImageTk.PhotoImage(Image.open("Icons/TetrisZone_logo_Poppins_v2.png").resize((160, 40)))
+        logo = customtkinter.CTkButton(master=frame, text="", fg_color='transparent', image=logo_icon, hover=False,
+                                       command=lambda: self.home_page())
+
+        logo.pack(anchor='nw', side='top')
 
     def destroy_menu(self):
         for widget in self.menu_frame.winfo_children():
@@ -94,12 +106,6 @@ class Menu:
 
         icons_frame = customtkinter.CTkFrame(master=self.menu_frame)
         icons_frame.pack(fill='both')
-        home_image = ImageTk.PhotoImage(Image.open("Icons/home_FILL1_wght400_GRAD0_opsz24.png").resize((40, 40)))
-        return_home_button = customtkinter.CTkButton(master=icons_frame, text="", height=30, corner_radius=5,
-                                                     fg_color='transparent', image=home_image, width=40,
-
-                                                     text_color='black', font=('Helvetica', 18), command=self.home_page)
-        return_home_button.pack(anchor='n', pady=10, side='left')
 
         scroll_frame = customtkinter.CTkScrollableFrame(self.menu_frame, width=580, height=380)
         scroll_frame.pack(padx=20, pady=30, fill="both", expand=True)
@@ -116,8 +122,6 @@ class Menu:
     def show_leaderboard(self, leaderboard_frame):
         for widget in leaderboard_frame.winfo_children():
             widget.destroy()
-
-        from database import handel_placement
 
         handel_placement()
 
@@ -152,8 +156,9 @@ class Menu:
     def profile_page(self):
         self.destroy_menu()
 
-        header_frame = customtkinter.CTkFrame(master=self.menu_frame)
+        header_frame = customtkinter.CTkFrame(master=self.menu_frame, fg_color="#232124", bg_color="#232124")
         header_frame.pack(side='top', anchor='nw', padx=30, pady=20, fill='both')
+
         profile_image = ImageTk.PhotoImage(Image.open("Icons/face_48dp_FILL0_wght400_GRAD0_opsz48.png")
                                            .resize((250, 250)))
 
@@ -166,12 +171,83 @@ class Menu:
         date_label = customtkinter.CTkLabel(master=header_frame, text='Created Date: 13/05/2024', text_color='#e4e2e5',
                                             font=('Poppins Black', 18))
         date_label.pack(anchor='w', side='left', padx=30, pady=80)
-    # Change the color
-        stats_frame = customtkinter.CTkFrame(master=self.menu_frame, fg_color='red')
-        stats_frame.pack(side='left', fill='both', expand=True, padx=30, pady=10)
-        stats_label = customtkinter.CTkLabel(master=stats_frame, text="User's stats:", font=('Poppins Bold', 28))
-        stats_label.pack(anchor='nw')
-    # Change the color
-        info_stats_frame = customtkinter.CTkFrame(master=stats_frame, fg_color='green')
-        info_stats_frame.pack(fill='both', expand=True)
 
+        stats_frame = customtkinter.CTkFrame(master=self.menu_frame, fg_color='#232124')
+        stats_frame.pack(side='left', fill='both', expand=True, padx=30, pady=10)
+        stats_label = customtkinter.CTkLabel(master=stats_frame, text=f"{self.username}'s stats:",
+                                             font=('Poppins Bold', 28))
+        stats_label.pack(anchor='nw')
+
+        info_stats_frame = customtkinter.CTkFrame(master=stats_frame, fg_color='#232124', border_width=3,
+                                                  border_color='#746898')
+        info_stats_frame.pack(fill='both', expand=True)
+        self.show_stats(info_stats_frame)
+
+    def show_stats(self, frame):
+        top_row = customtkinter.CTkFrame(master=frame, bg_color='transparent', fg_color='transparent')
+        top_row.pack(side='top', pady=20, padx=20)
+
+        score_frame = customtkinter.CTkFrame(master=top_row, bg_color='transparent', fg_color='transparent')
+        score_frame.pack(padx=20, anchor='nw', side='left')
+        total_score = ClientFunctions(self.client_socket, key=self.key).get_total_score(self.username)
+        total_score_label = customtkinter.CTkLabel(master=score_frame, text="Total score: ",
+                                                   font=('Poppins Bold', 28))
+        total_score_label.pack(anchor='w', side='left')
+        score_label = customtkinter.CTkLabel(master=score_frame, text=str(total_score),
+                                             font=('Poppins Regular', 22))
+        score_label.pack(anchor='center', side='left', padx=5)
+        # --------------------------------------------------------------------------------------------------------------
+        last_game_score_frame = customtkinter.CTkFrame(master=top_row, bg_color='transparent', fg_color='transparent')
+        last_game_score_frame.pack(padx=30, anchor='nw', side='left')
+        last_game_score = ClientFunctions(self.client_socket, key=self.key).get_last_game_score(self.username)
+        last_game_score_label = customtkinter.CTkLabel(master=last_game_score_frame, text=f"Last game score: ",
+                                                       font=('Poppins Bold', 28))
+        last_game_score_label.pack(anchor='w', side='left')
+        last_game_score_value_label = customtkinter.CTkLabel(master=last_game_score_frame, text=str(last_game_score),
+                                                             font=('Poppins Regular', 22))
+        last_game_score_value_label.pack(anchor='center', side='left', padx=5)
+        # --------------------------------------------------------------------------------------------------------------
+        highest_score_frame = customtkinter.CTkFrame(master=top_row, bg_color='transparent', fg_color='transparent')
+        highest_score_frame.pack(padx=20, anchor='ne', side='left')
+        highest_score = ClientFunctions(self.client_socket, key=self.key).get_highest_score(self.username)
+        highest_score_label = customtkinter.CTkLabel(master=highest_score_frame, text=f"Highest score: ",
+                                                     font=('Poppins Bold', 28))
+        highest_score_label.pack(anchor='w', side='left')
+        highest_score_value_label = customtkinter.CTkLabel(master=highest_score_frame, text=str(highest_score),
+                                                           font=('Poppins Regular', 22))
+        highest_score_value_label.pack(anchor='center', side='left', padx=5)
+
+        # --------------------------------------------------------------------------------------------------------------
+
+        bottom_row = customtkinter.CTkFrame(master=frame, bg_color='transparent', fg_color='transparent')
+        bottom_row.pack(side='top', pady=20, padx=20, fill='x')
+
+        total_lines_frame = customtkinter.CTkFrame(master=bottom_row, bg_color='transparent', fg_color='transparent')
+        total_lines_frame.pack(padx=20, anchor='nw', side='left')
+        total_lines = ClientFunctions(self.client_socket, key=self.key).get_total_lines(self.username)
+        total_lines_label = customtkinter.CTkLabel(master=total_lines_frame, text=f"Total lines: ",
+                                                   font=('Poppins Bold', 28))
+        total_lines_label.pack(anchor='w', side='left')
+        total_lines_value_label = customtkinter.CTkLabel(master=total_lines_frame, text=str(total_lines),
+                                                         font=('Poppins Regular', 22))
+        total_lines_value_label.pack(anchor='center', side='left', padx=5)
+        # --------------------------------------------------------------------------------------------------------------
+        games_played_frame = customtkinter.CTkFrame(master=bottom_row, bg_color='transparent', fg_color='transparent')
+        games_played_frame.pack(padx=90, anchor='nw', side='left')
+        games_played = ClientFunctions(self.client_socket, key=self.key).get_games_played(self.username)
+        games_played_label = customtkinter.CTkLabel(master=games_played_frame, text=f"Games played: ",
+                                                    font=('Poppins Bold', 28))
+        games_played_label.pack(anchor='w', side='left')
+        games_played_value_label = customtkinter.CTkLabel(master=games_played_frame, text=str(games_played),
+                                                          font=('Poppins Regular', 22))
+        games_played_value_label.pack(anchor='center', side='left', padx=5)
+        # --------------------------------------------------------------------------------------------------------------
+        played_time_frame = customtkinter.CTkFrame(master=bottom_row, bg_color='transparent', fg_color='transparent')
+        played_time_frame.pack(anchor='ne', side='left')
+        played_time = ClientFunctions(self.client_socket, key=self.key).get_played_time(self.username)
+        played_time_label = customtkinter.CTkLabel(master=played_time_frame, text=f"Play time: ",
+                                                   font=('Poppins Bold', 28))
+        played_time_label.pack(anchor='w', side='left')
+        played_time_value_label = customtkinter.CTkLabel(master=played_time_frame, text=played_time,
+                                                         font=('Poppins Regular', 22))
+        played_time_value_label.pack(anchor='center', side='left', padx=5, pady=1)

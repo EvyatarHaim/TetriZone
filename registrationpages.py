@@ -1,5 +1,6 @@
 import socket
 import customtkinter
+from PIL import ImageTk, Image
 from customtkinter import CTkButton
 from menu import Menu
 from client_commands import ClientFunctions
@@ -50,9 +51,14 @@ class RegistrationPages:
 
         title_frame = customtkinter.CTkFrame(master=self.base_frame, fg_color='#232124', corner_radius=10)
         title_frame.pack(pady=10, fill='both')
+        logo_icon = ImageTk.PhotoImage(Image.open("Icons/TetrisZone_logo_Poppins_v2.png").resize((160, 40)))
+        logo = customtkinter.CTkButton(master=title_frame, text="", corner_radius=5,
+                                       fg_color='transparent', image=logo_icon, hover=False,
+                                       command=lambda: self.login_page())
+        logo.pack(anchor='nw', side='top')
         title_label = customtkinter.CTkLabel(master=title_frame, text="LOGIN", text_color='#e4e2e5',
                                              font=('Poppins Black', 42))
-        title_label.pack(side='top', anchor='center', pady=20)
+        title_label.pack(side='bottom', anchor='center')
 
         margin = customtkinter.CTkFrame(master=self.base_frame, fg_color='#232124', height=75)
         margin.pack(fill='both')
@@ -125,9 +131,14 @@ class RegistrationPages:
         self.master.title("Tetris Game - Signup Page")
         title_frame = customtkinter.CTkFrame(master=self.base_frame, fg_color='#232124', corner_radius=10)
         title_frame.pack(pady=10, fill='both')
+        logo_icon = ImageTk.PhotoImage(Image.open("Icons/TetrisZone_logo_Poppins_v2.png").resize((160, 40)))
+        logo = customtkinter.CTkButton(master=title_frame, text="", corner_radius=5,
+                                       fg_color='transparent', image=logo_icon, hover=False,
+                                       command=lambda: self.login_page())
+        logo.pack(anchor='nw', side='top')
         title_label = customtkinter.CTkLabel(master=title_frame, text="SIGN UP", text_color='#e4e2e5',
                                              font=('Poppins Black', 42))
-        title_label.pack(side='top', anchor='center', pady=20)
+        title_label.pack(side='bottom', anchor='center')
 
         entry_frame = customtkinter.CTkFrame(master=self.base_frame, fg_color='#232124')
         entry_frame.pack(fill='both')
@@ -240,5 +251,3 @@ class RegistrationPages:
         root_window = customtkinter.CTk()
         Menu(client_socket=self.client_socket, master=root_window, username=username, key=self.key)
         root_window.mainloop()
-
-

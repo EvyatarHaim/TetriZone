@@ -1,7 +1,6 @@
 import socket
 from exceptions import InvalidMessage
-from AES import *
-from RSA import *
+
 
 MESSAGE_MAX_LENGTH = 10
 
@@ -14,7 +13,7 @@ def encode_massage(message: str) -> bytes:
 def decode_message_length(message: bytes) -> int:
     try:
         message_length = int(message[:MESSAGE_MAX_LENGTH])
-    except ValueError as err:
+    except ValueError:
         raise InvalidMessage("Invalid Message")
     return message_length
 

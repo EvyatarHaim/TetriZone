@@ -56,12 +56,13 @@ def create_db():
         REFERENCES users (user_name)
     )
     """)
-
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS stats (
         user_name VARCHAR(255) NOT NULL PRIMARY KEY, 
         games_played INTEGER NOT NULL DEFAULT 0,
-        lines INTEGER NOT NULL,  
+        played_time INTEGER NOT NULL DEFAULT 0,
+        total_score INTEGER NOT NULL DEFAULT 0,
+        lines INTEGER NOT NULL DEFAULT 0,  
         FOREIGN KEY (user_name)
         REFERENCES users (user_name)
     )
@@ -76,4 +77,10 @@ def create_db():
 
 
 if __name__ == '__main__':
+    # connection = sqlite3.connect('TetrisGame.db')
+    # cursor = connection.cursor()
+    # cursor.execute("")
+    # connection.commit()
+    # connection.close()
+
     reset_status()

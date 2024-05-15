@@ -73,3 +73,62 @@ class ClientFunctions:
         status = server_response.split('|')[2]
         return status
 
+    def get_total_score(self, username: str):
+        message = f"Get_Total_Score|{username}"
+        try:
+            send_message(message, self.client_socket, key=self.key)
+        except ExitException as err:
+            return err
+
+        server_response = recv_message(self.client_socket, key=self.key)
+        return server_response
+
+    def get_total_lines(self, username: str):
+        message = f"Get_Total_Lines|{username}"
+        try:
+            send_message(message, self.client_socket, key=self.key)
+        except ExitException as err:
+            return err
+
+        server_response = recv_message(self.client_socket, key=self.key)
+        return server_response
+
+    def get_games_played(self, username: str):
+        message = f"Get_Games_Played|{username}"
+        try:
+            send_message(message, self.client_socket, key=self.key)
+        except ExitException as err:
+            return err
+
+        server_response = recv_message(self.client_socket, key=self.key)
+        return server_response
+
+    def get_played_time(self, username: str):
+        message = f"Get_Played_Time|{username}"
+        try:
+            send_message(message, self.client_socket, key=self.key)
+        except ExitException as err:
+            return err
+
+        server_response = recv_message(self.client_socket, key=self.key)
+        return server_response
+
+    def get_last_game_score(self, username: str):
+        message = f"Get_Last_Game_Score|{username}"
+        try:
+            send_message(message, self.client_socket, key=self.key)
+        except ExitException as err:
+            return err
+
+        server_response = recv_message(self.client_socket, key=self.key)
+        return server_response
+
+    def get_highest_score(self, username:str):
+        message = f"Get_Highest_Score|{username}"
+        try:
+            send_message(message, self.client_socket, key=self.key)
+        except ExitException as err:
+            return err
+
+        server_response = recv_message(self.client_socket, key=self.key)
+        return server_response
