@@ -114,6 +114,14 @@ class Menu:
                                                                                 username=self.username, key=self.key))
         start_game_button.pack(pady=200, padx=250, fill='both', anchor='center', side='top')
 
+        # start_game_button = customtkinter.CTkButton(master=self.menu_frame, text="Start Game", height=60,
+        #                                             corner_radius=5,
+        #                                             fg_color='#418688',
+        #                                             text_color='black', font=('Helvetica', 18),
+        #                                             command=lambda: tetris_game(client_socket=self.client_socket,
+        #                                                                         username=self.username, key=self.key))
+        # start_game_button.pack(pady=60, anchor='center')
+
     def leaderboard_page(self):
         self.destroy_menu()
 
