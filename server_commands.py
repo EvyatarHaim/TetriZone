@@ -2,6 +2,7 @@ import socket
 from utils import send_message
 import sqlite3
 import hashlib
+from datetime import datetime
 
 
 def hashing_string(string: str):
@@ -161,9 +162,8 @@ class ServerFunctions:
             "Get_Games_Played": self.get_games_played,
             "Get_Played_Time": self.get_played_time,
             "Get_Last_Game_Score": self.get_last_game_score,
-            "Get_Highest_Score": self.get_highest_score
-
-
+            "Get_Highest_Score": self.get_highest_score,
+            "Get_Creation_Date": self.get_creation_date
         }
         client_command = info.split('|')[0]
         if client_command != "Leaderboard_Data":
@@ -236,6 +236,7 @@ class ServerFunctions:
 
         cursor.execute("INSERT INTO users (user_name, first_name, age, password, is_online) VALUES(?, ?, ?, ?, ?)",
                        (username, first_name, age, password, 1))
+        cursor.execute("UPDATE users SET creation_date=CURRENT_DATE WHERE user_name=?", (username, ))
 
         connection.commit()
         connection.close()
@@ -419,7 +420,7 @@ class ServerFunctions:
         send_message(str(last_game_Score), self.client_socket, key=self.key)
         return
 
-    def get_highest_score(self, info:str):
+    def get_highest_score(self, info: str):
         info_list = info.split('|')
 
         username: str = info_list[1]
@@ -439,3 +440,23 @@ class ServerFunctions:
         connection.close()
         send_message(str(highest_score), self.client_socket, key=self.key)
         return
+
+    def get_creation_date(self, info: str):
+        info_list = info.split('|')
+
+        username: str = info_list[1]
+
+        connection = sqlite3.connect('TetrisGame.db')
+        cursor = connection.cursor()
+        cursor.execute("SELECT creation_date FROM users WHERE user_name=?", (username,))
+        date = cursor.fetchone()[0]
+
+        date_obj = datetime.strptime(date, '%Y-%m-%d')
+
+        formatted_date = date_obj.strftime('%d/%m/%Y')
+
+        connection.commit()
+        connection.close()
+        send_message(str(formatted_date), self.client_socket, key=self.key)
+        return
+

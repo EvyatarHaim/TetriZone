@@ -123,8 +123,18 @@ class ClientFunctions:
         server_response = recv_message(self.client_socket, key=self.key)
         return server_response
 
-    def get_highest_score(self, username:str):
+    def get_highest_score(self, username: str):
         message = f"Get_Highest_Score|{username}"
+        try:
+            send_message(message, self.client_socket, key=self.key)
+        except ExitException as err:
+            return err
+
+        server_response = recv_message(self.client_socket, key=self.key)
+        return server_response
+
+    def get_creation_date(self, username: str):
+        message = f"Get_Creation_Date|{username}"
         try:
             send_message(message, self.client_socket, key=self.key)
         except ExitException as err:

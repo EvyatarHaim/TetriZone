@@ -242,9 +242,10 @@ class RegistrationPages:
 
         # Check if the response is a success message
         if server_response != "[SERVER:] User have created successfully":
-            error_message = server_response[4:]  # Removing "[SERVER:]" prefix
+            error_message = server_response[4:]  # Removing "[SERVER:]"
             self.display_error(error_message)
             return
+        print(server_response)
 
         # If registration is successful, open the menu and close the current window
         self.master.destroy()
