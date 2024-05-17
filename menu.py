@@ -93,16 +93,26 @@ class Menu:
     def home_page(self):
         self.destroy_menu()
 
-        # title_label = customtkinter.CTkLabel(master=self.base_frame, text="Welcome to TetrisGame!",
-        # text_color='black', font=('Helvetica', 32)) title_label.pack(pady=40)
+        header_frame = customtkinter.CTkFrame(master=self.menu_frame, fg_color='transparent', bg_color='transparent')
+        header_frame.pack(anchor='nw', side='top', fill='both', expand=True)
 
-        start_game_button = customtkinter.CTkButton(master=self.menu_frame, text="Start Game", height=60,
-                                                    corner_radius=5,
-                                                    fg_color='#418688',
-                                                    text_color='black', font=('Helvetica', 18),
-                                                    command=lambda: tetris_game(client_socket=self.client_socket,
-                                                                                username=self.username, key=self.key))
-        start_game_button.pack(pady=60, anchor='center')
+        title = customtkinter.CTkLabel(master=header_frame, fg_color='transparent', bg_color='transparent',
+                                       text="Welcome to TETRIZONE", font=("Poppins Black", 64),
+                                       text_color='#e4e2e5')
+        title.pack(anchor='center', side='top', pady=5)
+        sub_title = customtkinter.CTkLabel(master=header_frame, fg_color='transparent', bg_color='transparent',
+                                           text=" Enter the Zone and experience Tetris like never before!",
+                                           font=("Poppins Regular", 18),
+                                           text_color='#e4e2e5')
+        sub_title.pack(anchor='center', side='top')
+
+        # start_game_button = customtkinter.CTkButton(master=self.menu_frame, text="Start Game", height=60,
+        #                                             corner_radius=5,
+        #                                             fg_color='#418688',
+        #                                             text_color='black', font=('Helvetica', 18),
+        #                                             command=lambda: tetris_game(client_socket=self.client_socket,
+        #                                                                         username=self.username, key=self.key))
+        # start_game_button.pack(pady=60, anchor='center')
 
     def leaderboard_page(self):
         self.destroy_menu()
