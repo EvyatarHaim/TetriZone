@@ -1,0 +1,5 @@
+customtkinter==1.0.0
+Pillow==8.3.2
+pygame==2.0.1
+pycryptodom==3.9.9
+pycryptodomx==3.9.9

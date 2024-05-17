@@ -1,9 +1,8 @@
 import pygame
-import sys
 from Game.game import Game
 from Game.colors import Colors
 import socket
-from utils import send_message, recv_message
+from utils import send_message
 
 
 def format_time(seconds):
