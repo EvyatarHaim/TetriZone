@@ -93,16 +93,26 @@ class Menu:
     def home_page(self):
         self.destroy_menu()
 
-        # title_label = customtkinter.CTkLabel(master=self.base_frame, text="Welcome to TetrisGame!",
-        # text_color='black', font=('Helvetica', 32)) title_label.pack(pady=40)
+        header_frame = customtkinter.CTkFrame(master=self.menu_frame, fg_color='transparent', bg_color='transparent')
+        header_frame.pack(anchor='nw', side='top', fill='both', expand=True)
 
-        start_game_button = customtkinter.CTkButton(master=self.menu_frame, text="Start Game", height=60,
-                                                    corner_radius=5,
-                                                    fg_color='#418688',
-                                                    text_color='black', font=('Helvetica', 18),
+        title = customtkinter.CTkLabel(master=header_frame, fg_color='transparent', bg_color='transparent',
+                                       text="Welcome to TETRIZONE", font=("Poppins Black", 64),
+                                       text_color='#e4e2e5')
+        title.pack(anchor='center', side='top', pady=5)
+        sub_title = customtkinter.CTkLabel(master=header_frame, fg_color='transparent', bg_color='transparent',
+                                           text=" Enter the Zone and experience Tetris like never before!",
+                                           font=("Poppins Regular", 18),
+                                           text_color='#e4e2e5')
+        sub_title.pack(anchor='center', side='top')
+
+        start_game_button = customtkinter.CTkButton(master=header_frame, text="Start Game", height=60, corner_radius=10,
+                                                    fg_color='#4622b7',
+                                                    text_color='#e4e2e5', font=('Poppins Bold', 32),
+                                                    hover_color='#9b80e1',
                                                     command=lambda: tetris_game(client_socket=self.client_socket,
                                                                                 username=self.username, key=self.key))
-        start_game_button.pack(pady=60, anchor='center')
+        start_game_button.pack(pady=200, padx=250, fill='both', anchor='center', side='top')
 
     def leaderboard_page(self):
         self.destroy_menu()
@@ -262,7 +272,7 @@ class Menu:
         # --------------------------------------------------------------------------------------------------------------
 
         bottom_row = customtkinter.CTkFrame(master=frame, bg_color='transparent', fg_color='transparent')
-        bottom_row.pack(side='top', pady=20, padx=10, fill='x')
+        bottom_row.pack(side='top', pady=30, padx=10, fill='x')
 
         total_lines_frame = customtkinter.CTkFrame(master=bottom_row, bg_color='transparent', fg_color='transparent')
         total_lines_frame.pack(padx=20, anchor='nw', side='left')
