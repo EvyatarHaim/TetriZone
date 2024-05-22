@@ -1,3 +1,4 @@
+import re
 import socket
 import customtkinter
 from PIL import ImageTk, Image
@@ -6,13 +7,37 @@ from menu import Menu
 from client_commands import ClientFunctions
 
 
+def is_strong_password(password):
+    # Minimum length check
+    if len(password) < 8:
+        return "Password must be at least 8 characters long"
+
+    # Uppercase letter check
+    if not re.search("[A-Z]", password):
+        return "Password must contain at least one uppercase letter"
+
+    # Lowercase letter check
+    if not re.search("[a-z]", password):
+        return "Password must contain at least one lowercase letter"
+
+    # Digit check
+    if not re.search("[0-9]", password):
+        return "Password must contain at least one digit"
+
+    # Special character check
+    if not re.search("[!@#$%^&*(),.?\":{}|<>]", password):
+        return "Password must contain at least one special character"
+
+    return "Password is strong"
+
+
 class RegistrationPages:
     def __init__(self, client_socket: socket, master, key):
         self.client_socket = client_socket
         self.key = key
         self.master = master
         self.master.geometry('600x820')
-        self.master.title("Tetris Game")
+        self.master.title("TetriZone")
         self.master.resizable(False, False)
 
         self.base_background = customtkinter.CTkFrame(master=self.master, fg_color='#010002', bg_color='#010002')
@@ -38,7 +63,7 @@ class RegistrationPages:
     def display_error(self, message):
         self.destroy_error()
         error_label = customtkinter.CTkLabel(master=self.error_frame, text=message, text_color='#e4e2e5',
-                                             fg_color='#cc0000', bg_color='#FF204E', corner_radius=3,
+                                             fg_color='#cc0000', bg_color='#FF204E', corner_radius=3, height=40,
                                              font=("Poppins Regular", 14))
         error_label.pack(fill='both', anchor='center')
 
@@ -47,7 +72,7 @@ class RegistrationPages:
             widget.destroy()
         self.destroy_error()
 
-        self.master.title("Tetris Game - Login Page")
+        self.master.title("TetriZone - Login Page")
 
         title_frame = customtkinter.CTkFrame(master=self.base_frame, fg_color='#232124', corner_radius=10)
         title_frame.pack(pady=10, fill='both')
@@ -128,7 +153,7 @@ class RegistrationPages:
             widget.destroy()
         self.destroy_error()
 
-        self.master.title("Tetris Game - Signup Page")
+        self.master.title("TetriZone - Signup Page")
         title_frame = customtkinter.CTkFrame(master=self.base_frame, fg_color='#232124', corner_radius=10)
         title_frame.pack(pady=10, fill='both')
         logo_icon = ImageTk.PhotoImage(Image.open("Icons/TetrisZone_logo_Poppins_v2.png").resize((160, 40)))
@@ -207,9 +232,9 @@ class RegistrationPages:
 
         submit_button = CTkButton(master=bottom_frame, text="Submit", height=60, corner_radius=10, fg_color='#4622b7',
                                   text_color='#e4e2e5', font=('Poppins Bold', 32), hover_color='#9b80e1',
-                                  command=lambda: self.submit_function(name_entry.get(), age_entry.get(),
-                                                                       username_entry.get(), password_entry.get(),
-                                                                       confirm_password_entry.get()))
+                                  command=lambda: self.register_function(name_entry.get(), age_entry.get(),
+                                                                         username_entry.get(), password_entry.get(),
+                                                                         confirm_password_entry.get()))
         submit_button.pack(pady=15, padx=40, fill='both', side='top')
 
         margin = customtkinter.CTkFrame(master=bottom_frame, fg_color='#232124', width=75, height=22)
@@ -226,14 +251,29 @@ class RegistrationPages:
                                                 font=('Poppins Bold', 16), command=self.login_page)
         signup_button.pack(pady=22, anchor='se', side='left')
 
-    def submit_function(self, first_name: str, age: str, username: str, password: str, confirm_password: str):
-        if password != confirm_password:
-            error_message = "Passwords do not match"
+    def register_function(self, first_name: str, age: str, username: str, password: str, confirm_password: str):
+        if first_name == "" or age == "" or username == "" or password == "":
+            error_message = "One or more fields are empty"
             self.display_error(error_message)
             return
 
-        if first_name == "" or age == "" or username == "" or password == "":
-            error_message = "One or more fields are empty"
+        if not re.match("^[a-zA-Z]{1,10}$", first_name):
+            error_message = "First name must contain only letters"
+            self.display_error(error_message)
+            return
+
+        if len(age) > 3 or not age.isdigit():
+            error_message = "Make sure to enter a valid age"
+            self.display_error(error_message)
+            return
+
+        error_message = is_strong_password(password=password)
+        if error_message != "Password is strong":
+            self.display_error(error_message)
+            return
+
+        if password != confirm_password:
+            error_message = "Passwords do not match"
             self.display_error(error_message)
             return
 

@@ -294,7 +294,7 @@ class ServerFunctions:
         if status == 1:
             str_status = "Online"
         if status == 0:
-            str_status = "Disconnected"
+            str_status = "Offline"
 
         connection.commit()
         connection.close()

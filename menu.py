@@ -14,7 +14,7 @@ class Menu:
         self.master = master
 
         self.master.geometry('1300x900')
-        self.master.title("TetrisGame- Menu")
+        self.master.title("TetriZone- Menu")
         self.master.resizable(False, False)
 
         self.master.protocol("WM_DELETE_WINDOW", lambda: self.master_window_closed(self.client_socket, self.key,
@@ -186,13 +186,13 @@ class Menu:
                     if status == "Online":
                         cell = customtkinter.CTkLabel(leaderboard_frame, text=f"{status}", text_color='green',
                                                       fg_color='transparent',
-                                                      bg_color='transparent', font=('Poppins Bold', 12))
+                                                      bg_color='transparent', font=('Poppins Bold', 14))
                         cell.grid(row=row + 1, column=col, padx=40, pady=20)
 
                     else:
                         cell = customtkinter.CTkLabel(leaderboard_frame, text=f"{status}", text_color='red',
                                                       fg_color='transparent',
-                                                      bg_color='transparent', font=('Poppins Bold', 12))
+                                                      bg_color='transparent', font=('Poppins Bold', 14))
                         cell.grid(row=row + 1, column=col, padx=40, pady=20)
                 elif col == 0:  # Placement column
                     cell = customtkinter.CTkLabel(leaderboard_frame, text=f"{data_rows[row][col]}",
@@ -203,7 +203,7 @@ class Menu:
                 else:
                     cell = customtkinter.CTkLabel(leaderboard_frame, text=f"{data_rows[row][col]}",
                                                   fg_color='transparent',
-                                                  bg_color='transparent', font=('Poppins Regular', 12),
+                                                  bg_color='transparent', font=('Poppins Regular', 14),
                                                   text_color="#e4e2e5", )
                     cell.grid(row=row + 1, column=col, padx=40, pady=20)
 
