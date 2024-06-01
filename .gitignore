@@ -1,7 +1,23 @@
-# ignore all those files
+# Ignore TetriZone.db
+TetriZone.db
 
-Game/__pycache__/
-/__pycache__/
-/.idea/
+# Ignore database.py
 database.py
-TetrisGame.db
+
+# Ignore RSA.py
+RSA.py
+
+# Ignore AES.py
+AES.py
+
+# Ignore .gitignore
+.gitignore
+
+# Ignore exceptions.py
+exceptions.py
+
+# Ignore Python bytecode files
+*.pyc
+
+# Ignore .idea folder
+.idea/
