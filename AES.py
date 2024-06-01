@@ -34,11 +34,3 @@ class AESCipher(object):
     def __unpad(plain_text):
         last_character = plain_text[len(plain_text) - 1:]
         return plain_text[:-ord(last_character)]
-
-
-if __name__ == '__main__':
-    AESC = AESCipher('shalev')
-    enc = AESC.encrypt('שלום')
-    dec = AESC.decrypt(enc)
-    print(enc)
-    print(dec)

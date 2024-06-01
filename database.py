@@ -2,7 +2,7 @@ import sqlite3
 
 
 def reset_status():
-    connection = sqlite3.connect('TetrisGame.db')
+    connection = sqlite3.connect('TetriZone.db')
     cursor = connection.cursor()
 
     cursor.execute("UPDATE users SET is_online = 0")
@@ -12,7 +12,7 @@ def reset_status():
 
 
 def handel_placement():
-    connection = sqlite3.connect("TetrisGame.db")
+    connection = sqlite3.connect("TetriZone.db")
     cursor = connection.cursor()
     # Create a temporary table with ranks based on 'highest_score' by DESC order
     cursor.execute("""
@@ -32,12 +32,11 @@ def handel_placement():
 
 
 def create_db():
-    connection = sqlite3.connect('TetrisGame.db')
+    connection = sqlite3.connect('TetriZone.db')
     cursor = connection.cursor()
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY, 
         user_name VARCHAR(255) NOT NULL,
         first_name VARCHAR(255) NOT NULL,
         age VARCHAR(255) NOT NULL,
@@ -83,5 +82,8 @@ if __name__ == '__main__':
     # cursor.execute("UPDATE users SET creation_date = '2024-05-07' WHERE user_name=?", ("test9",))
     # connection.commit()
     # connection.close()
+
+    # Connect to the SQLite database
+    # Connect to the SQLite database
 
     reset_status()

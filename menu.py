@@ -52,7 +52,7 @@ class Menu:
             self.master.destroy()
 
     def display_logo(self, frame):
-        logo_icon = ImageTk.PhotoImage(Image.open("Icons/TetrisZone_logo_Poppins_v2.png").resize((160, 40)))
+        logo_icon = ImageTk.PhotoImage(Image.open("Icons/TetriZone_logo.png").resize((160, 40)))
         logo = customtkinter.CTkButton(master=frame, text="", fg_color='transparent', image=logo_icon, hover=False,
                                        command=lambda: self.home_page())
 
@@ -64,7 +64,7 @@ class Menu:
 
     def side_nav_bar(self):
 
-        home_icon = ImageTk.PhotoImage(Image.open("Icons/home_24dp_FILL0_wght400_GRAD0_opsz24.png").resize((32, 32)))
+        home_icon = ImageTk.PhotoImage(Image.open("Icons/Home_icon.png").resize((32, 32)))
         home_frame = customtkinter.CTkFrame(master=self.side_bar_frame, fg_color='transparent', bg_color='transparent')
         home_frame.pack(pady=3, padx=3, anchor='nw', side='top')
         return_home_button = customtkinter.CTkButton(master=home_frame, text="HOME", corner_radius=5,
@@ -74,7 +74,7 @@ class Menu:
         return_home_button.pack(anchor='nw', side='left', pady=5, padx=5)
         home_label = customtkinter.CTkLabel(master=home_frame, fg_color='transparent', bg_color='transparent')
 
-        leaderboard_icon = ImageTk.PhotoImage(Image.open("Icons/leaderboard_24dp_FILL0_wght400_GRAD0_opsz24.png")
+        leaderboard_icon = ImageTk.PhotoImage(Image.open("Icons/Leaderboard_icon.png")
                                               .resize((32, 32)))
         leaderboard_button = customtkinter.CTkButton(master=self.side_bar_frame, text="LEADERBOARD", corner_radius=5,
                                                      fg_color='transparent', image=leaderboard_icon,
@@ -82,7 +82,7 @@ class Menu:
                                                      command=self.leaderboard_page)
         leaderboard_button.pack(anchor='nw', side='top', pady=5, padx=5)
 
-        profile_icon = ImageTk.PhotoImage(Image.open("Icons/account_circle_24dp_FILL0_wght400_GRAD0_opsz24.png")
+        profile_icon = ImageTk.PhotoImage(Image.open("Icons/Profile_icon.png")
                                           .resize((32, 32)))
         profile_button = customtkinter.CTkButton(master=self.side_bar_frame, text="PROFILE", corner_radius=5,
                                                  fg_color='transparent', image=profile_icon,
@@ -128,7 +128,7 @@ class Menu:
         header_frame = customtkinter.CTkFrame(master=self.menu_frame, fg_color='transparent', bg_color='transparent')
         header_frame.pack(anchor='nw', side='top', fill='x', pady=10)
         refresh_image = ImageTk.PhotoImage(
-            Image.open("Icons/refresh_24dp_FILL0_wght400_GRAD0_opsz24.png").resize((40, 40)))
+            Image.open("Icons/Refresh_icon.png").resize((40, 40)))
         return_home_button = customtkinter.CTkButton(master=header_frame, text="", height=30, corner_radius=5,
                                                      fg_color='transparent', image=refresh_image, hover=False,
                                                      command=lambda: self.show_leaderboard(scroll_frame))
@@ -157,7 +157,7 @@ class Menu:
             return ClientFunctions(self.client_socket, key=self.key).get_status(username)
 
         trophy_icon = ImageTk.PhotoImage(
-            Image.open("Icons/trophy_24dp_FILL1_wght400_GRAD0_opsz24.png").resize((20, 20)))
+            Image.open("Icons/Trophy_icon.png").resize((20, 20)))
         rows = len(data_rows)
         columns = len(headers)
 
@@ -213,7 +213,7 @@ class Menu:
         header_frame = customtkinter.CTkFrame(master=self.menu_frame, fg_color="#232124", bg_color="#232124")
         header_frame.pack(side='top', anchor='nw', padx=30, pady=20, fill='both')
 
-        profile_image = ImageTk.PhotoImage(Image.open("Icons/face_48dp_FILL0_wght400_GRAD0_opsz48.png")
+        profile_image = ImageTk.PhotoImage(Image.open("Icons/Face_icon.png")
                                            .resize((250, 250)))
 
         profile_image_label = customtkinter.CTkLabel(master=header_frame, text="", image=profile_image)

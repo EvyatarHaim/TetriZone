@@ -76,7 +76,7 @@ class RegistrationPages:
 
         title_frame = customtkinter.CTkFrame(master=self.base_frame, fg_color='#232124', corner_radius=10)
         title_frame.pack(pady=10, fill='both')
-        logo_icon = ImageTk.PhotoImage(Image.open("Icons/TetrisZone_logo_Poppins_v2.png").resize((160, 40)))
+        logo_icon = ImageTk.PhotoImage(Image.open("Icons/TetriZone_logo.png").resize((160, 40)))
         logo = customtkinter.CTkButton(master=title_frame, text="", corner_radius=5,
                                        fg_color='transparent', image=logo_icon, hover=False,
                                        command=lambda: self.login_page())
@@ -156,7 +156,7 @@ class RegistrationPages:
         self.master.title("TetriZone - Signup Page")
         title_frame = customtkinter.CTkFrame(master=self.base_frame, fg_color='#232124', corner_radius=10)
         title_frame.pack(pady=10, fill='both')
-        logo_icon = ImageTk.PhotoImage(Image.open("Icons/TetrisZone_logo_Poppins_v2.png").resize((160, 40)))
+        logo_icon = ImageTk.PhotoImage(Image.open("Icons/TetriZone_logo.png").resize((160, 40)))
         logo = customtkinter.CTkButton(master=title_frame, text="", corner_radius=5,
                                        fg_color='transparent', image=logo_icon, hover=False,
                                        command=lambda: self.login_page())
@@ -257,7 +257,7 @@ class RegistrationPages:
             self.display_error(error_message)
             return
 
-        if not re.match("^[a-zA-Z]{1,10}$", first_name):
+        if not re.match("^[a-zA-Z]{2,10}$", first_name):
             error_message = "First name must contain only letters"
             self.display_error(error_message)
             return

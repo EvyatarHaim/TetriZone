@@ -14,7 +14,7 @@ def format_time(seconds):
 def tetris_game(client_socket: socket, username, key):
     pygame.init()
 
-    title_font = pygame.font.SysFont(None, 40)
+    title_font = pygame.font.SysFont('Poppins Black', 24)
     score_surface = title_font.render("Score", True, Colors.white)
     next_surface = title_font.render("Next", True, Colors.white)
     game_over_surface = title_font.render("GAME OVER", True, Colors.white)

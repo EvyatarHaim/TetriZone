@@ -10,7 +10,7 @@ def hashing_string(string: str):
 
 
 def update_total_score(username: str, last_game_score: int):
-    connection = sqlite3.connect('TetrisGame.db')
+    connection = sqlite3.connect('TetriZone.db')
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM stats WHERE user_name=?", (username,))
     exist_user = cursor.fetchone()
@@ -34,7 +34,7 @@ def update_total_score(username: str, last_game_score: int):
 
 
 def update_games_played(username: str):
-    connection = sqlite3.connect('TetrisGame.db')
+    connection = sqlite3.connect('TetriZone.db')
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM stats WHERE user_name=?", (username,))
     exist_user = cursor.fetchone()
@@ -60,7 +60,7 @@ def update_games_played(username: str):
 def score(username: str, last_score: int):
     update_total_score(username=username, last_game_score=last_score)
 
-    connection = sqlite3.connect('TetrisGame.db')
+    connection = sqlite3.connect('TetriZone.db')
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM scores WHERE user_name=?", (username,))
     exist_user = cursor.fetchone()
@@ -90,7 +90,7 @@ def score(username: str, last_score: int):
 
 
 def update_lines(username: str, last_game_lines: int):
-    connection = sqlite3.connect('TetrisGame.db')
+    connection = sqlite3.connect('TetriZone.db')
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM stats WHERE user_name=?", (username,))
     exist_user = cursor.fetchone()
@@ -113,7 +113,7 @@ def update_lines(username: str, last_game_lines: int):
 
 
 def update_game_time(username: str, last_game_time: int):
-    connection = sqlite3.connect('TetrisGame.db')
+    connection = sqlite3.connect('TetriZone.db')
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM stats WHERE user_name=?", (username,))
     exist_user = cursor.fetchone()
@@ -126,7 +126,7 @@ def update_game_time(username: str, last_game_time: int):
         cursor.execute("UPDATE stats SET played_time=? WHERE user_name=? ", (updated_time, username))
     else:
         # Because user is not existed in stats we will insert into played_time the last_game_time
-        cursor.execute("INSERT INTO stats (user_name, lines) VALUES(?, ?)",
+        cursor.execute("INSERT INTO stats (user_name, played_time) VALUES(?, ?)",
                        (username, last_game_time))
 
     connection.commit()
@@ -149,7 +149,6 @@ class ServerFunctions:
     def __init__(self, client_socket: socket, info: str, key):
         self.client_socket = client_socket
         self.key = key
-
         self.server_commands: dict = {
             "Login": self.login,
             "Register": self.register,
@@ -181,7 +180,7 @@ class ServerFunctions:
             send_message("[!] One or more entries are empty", self.client_socket, key=self.key)
             return
 
-        connection = sqlite3.connect('TetrisGame.db')
+        connection = sqlite3.connect('TetriZone.db')
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM users WHERE user_name=?", (username,))
         exist_user = cursor.fetchone()
@@ -224,7 +223,7 @@ class ServerFunctions:
         username: str = info_list[3]
         password = hashing_string(info_list[4])
 
-        connection = sqlite3.connect('TetrisGame.db')
+        connection = sqlite3.connect('TetriZone.db')
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM users WHERE user_name=?", (username,))
         exist_user = cursor.fetchone()
@@ -236,7 +235,7 @@ class ServerFunctions:
 
         cursor.execute("INSERT INTO users (user_name, first_name, age, password, is_online) VALUES(?, ?, ?, ?, ?)",
                        (username, first_name, age, password, 1))
-        cursor.execute("UPDATE users SET creation_date=CURRENT_DATE WHERE user_name=?", (username, ))
+        cursor.execute("UPDATE users SET creation_date=CURRENT_DATE WHERE user_name=?", (username,))
 
         connection.commit()
         connection.close()
@@ -244,7 +243,7 @@ class ServerFunctions:
         return
 
     def leaderboard_data(self):
-        connection = sqlite3.connect('TetrisGame.db')
+        connection = sqlite3.connect('TetriZone.db')
         cursor = connection.cursor()
         # Getting the Top 10 -> DESC from the highest to the lowest
         data = cursor.execute("SELECT * FROM scores ORDER BY highest_score DESC LIMIT 10")
@@ -269,7 +268,7 @@ class ServerFunctions:
         username: str = info_list[1]
         status: int = int(info_list[2])
 
-        connection = sqlite3.connect('TetrisGame.db')
+        connection = sqlite3.connect('TetriZone.db')
         cursor = connection.cursor()
 
         cursor.execute("UPDATE users SET is_online=? WHERE user_name=? ", (status, username))
@@ -285,7 +284,7 @@ class ServerFunctions:
 
         username: str = info_list[1]
 
-        connection = sqlite3.connect('TetrisGame.db')
+        connection = sqlite3.connect('TetriZone.db')
         cursor = connection.cursor()
         cursor.execute("SELECT is_online FROM users WHERE user_name=?", (username,))
         status: int = int(cursor.fetchone()[0])
@@ -320,7 +319,7 @@ class ServerFunctions:
 
         username: str = info_list[1]
         total_score = 0
-        connection = sqlite3.connect('TetrisGame.db')
+        connection = sqlite3.connect('TetriZone.db')
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM stats WHERE user_name=?", (username,))
         exist_user = cursor.fetchone()
@@ -341,7 +340,7 @@ class ServerFunctions:
         username: str = info_list[1]
         total_lines = 0
 
-        connection = sqlite3.connect('TetrisGame.db')
+        connection = sqlite3.connect('TetriZone.db')
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM stats WHERE user_name=?", (username,))
         exist_user = cursor.fetchone()
@@ -362,7 +361,7 @@ class ServerFunctions:
         username: str = info_list[1]
         total_games_played = 0
 
-        connection = sqlite3.connect('TetrisGame.db')
+        connection = sqlite3.connect('TetriZone.db')
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM stats WHERE user_name=?", (username,))
         exist_user = cursor.fetchone()
@@ -383,7 +382,7 @@ class ServerFunctions:
         username: str = info_list[1]
         time = 0
 
-        connection = sqlite3.connect('TetrisGame.db')
+        connection = sqlite3.connect('TetriZone.db')
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM stats WHERE user_name=?", (username,))
         exist_user = cursor.fetchone()
@@ -405,7 +404,7 @@ class ServerFunctions:
         username: str = info_list[1]
         last_game_Score = 0
 
-        connection = sqlite3.connect('TetrisGame.db')
+        connection = sqlite3.connect('TetriZone.db')
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM stats WHERE user_name=?", (username,))
         exist_user = cursor.fetchone()
@@ -426,7 +425,7 @@ class ServerFunctions:
         username: str = info_list[1]
         highest_score = 0
 
-        connection = sqlite3.connect('TetrisGame.db')
+        connection = sqlite3.connect('TetriZone.db')
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM stats WHERE user_name=?", (username,))
         exist_user = cursor.fetchone()
@@ -446,7 +445,7 @@ class ServerFunctions:
 
         username: str = info_list[1]
 
-        connection = sqlite3.connect('TetrisGame.db')
+        connection = sqlite3.connect('TetriZone.db')
         cursor = connection.cursor()
         cursor.execute("SELECT creation_date FROM users WHERE user_name=?", (username,))
         date = cursor.fetchone()[0]
@@ -459,4 +458,3 @@ class ServerFunctions:
         connection.close()
         send_message(str(formatted_date), self.client_socket, key=self.key)
         return
-
