@@ -1,5 +1,4 @@
-# TetriZone
-
+# TetriZone 
 ![TetriZone Logo](Icons/TetriZone_logo.png)
 
 ## Introduction
