@@ -60,9 +60,11 @@ TetriZone is a server-client based version of the popular Tetris game. It allows
 ### Screenshots
 
 ![Login Screen](Icons/login_page_screenshot.png)
+
 *Login Screen*
 
 ![Game Screen](Icons/game_screen_image.png)
+
 *In-Game Screen*
 
 ## Project Architecture
