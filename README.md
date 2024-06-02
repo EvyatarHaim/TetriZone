@@ -23,7 +23,7 @@ TetriZone is a server-client based version of the popular Tetris game. It allows
 
 1. **Clone the Repository**:
     ```sh
-    git clone [https://github.com/EvyatarHaim/TetriZone.git](https://github.com/EvyatarHaim/TetriZone.git)
+    git clone https://github.com/EvyatarHaim/TetriZone.git
     cd TetriZone
     ```
 
