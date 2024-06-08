@@ -19,6 +19,7 @@ class Game:
         pygame.mixer.music.load("Sounds/music.ogg")
         pygame.mixer.music.play(-1)
 
+    # Update user's score.
     def update_score(self, lines_cleared, move_down_points):
         if lines_cleared == 1:
             self.score += 100
@@ -28,6 +29,7 @@ class Game:
             self.score += 500
         self.score += move_down_points
 
+    # Returns a random shape.
     def get_random_shape(self):
         if len(self.shapes) == 0:
             self.shapes = [IShape(), JShape(), LShape(), OShape(), SShape(), TShape(), ZShape()]
@@ -51,6 +53,7 @@ class Game:
             self.current_shape.move(-1, 0)
             self.lock_block()
 
+    # Lock the block in place on the grid.
     def lock_block(self):
         tiles = self.current_shape.get_cell_positions()
         for position in tiles:
@@ -65,6 +68,7 @@ class Game:
         if not self.shape_fits():
             self.game_over = True
 
+    # Reset the game.
     def reset(self):
         self.grid.reset()
         self.shapes = [IShape(), JShape(), LShape(), OShape(), SShape(), TShape(), ZShape()]
@@ -72,6 +76,7 @@ class Game:
         self.next_shape = self.get_random_shape()
         self.score = 0
 
+    # Check if the shape fits on the grid.
     def shape_fits(self):
         tiles = self.current_shape.get_cell_positions()
         for tile in tiles:
@@ -79,6 +84,7 @@ class Game:
                 return False
         return True
 
+    # Rotate the shape.
     def rotate(self):
         self.current_shape.rotate()
         if self.shape_inside() == False or self.shape_fits() == False:
@@ -86,6 +92,7 @@ class Game:
         else:
             self.rotate_sound.play()
 
+    # Check if the shape is in the grid.
     def shape_inside(self):
         tiles = self.current_shape.get_cell_positions()
         for tile in tiles:
@@ -93,6 +100,7 @@ class Game:
                 return False
         return True
 
+    # Draw the game.
     def draw(self, screen):
         self.grid.draw(screen)
         self.current_shape.draw(screen, 11, 11)
@@ -104,5 +112,6 @@ class Game:
         else:
             self.next_shape.draw(screen, 270, 270)
 
+    # Return the numbers of lines that have been broken by the player.
     def get_lines(self):
         return self.lines

@@ -2,6 +2,7 @@ from Game.block import Block
 from Game.position import Position
 
 
+# Represents all the shapes in the Tetris game.
 class LShape(Block):
     def __init__(self):
         super().__init__(shape_id=1)

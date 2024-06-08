@@ -13,7 +13,7 @@ class Menu:
         self.key = key
         self.master = master
 
-        self.master.geometry('1300x900')
+        self.master.geometry('1300x800')
         self.master.title("TetriZone- Menu")
         self.master.resizable(False, False)
 
@@ -72,7 +72,6 @@ class Menu:
                                                      text_color='#e4e2e5', font=('Poppins Regular', 24),
                                                      command=self.home_page)
         return_home_button.pack(anchor='nw', side='left', pady=5, padx=5)
-        home_label = customtkinter.CTkLabel(master=home_frame, fg_color='transparent', bg_color='transparent')
 
         leaderboard_icon = ImageTk.PhotoImage(Image.open("Icons/Leaderboard_icon.png")
                                               .resize((32, 32)))
@@ -113,14 +112,6 @@ class Menu:
                                                     command=lambda: tetris_game(client_socket=self.client_socket,
                                                                                 username=self.username, key=self.key))
         start_game_button.pack(pady=200, padx=250, fill='both', anchor='center', side='top')
-
-        # start_game_button = customtkinter.CTkButton(master=self.menu_frame, text="Start Game", height=60,
-        #                                             corner_radius=5,
-        #                                             fg_color='#418688',
-        #                                             text_color='black', font=('Helvetica', 18),
-        #                                             command=lambda: tetris_game(client_socket=self.client_socket,
-        #                                                                         username=self.username, key=self.key))
-        # start_game_button.pack(pady=60, anchor='center')
 
     def leaderboard_page(self):
         self.destroy_menu()

@@ -11,6 +11,7 @@ class Colors:
     dark_blue = (44, 44, 127)
     light_blue = (59, 85, 162)
 
+    # Returns a list of cell colors for different block types.
     @classmethod
     def get_cell_colors(cls):
         return [cls.dark_grey, cls.green, cls.red, cls.orange, cls.yellow, cls.purple, cls.cyan, cls.blue]

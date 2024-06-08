@@ -5,12 +5,14 @@ import socket
 from utils import send_message
 
 
+# Format the time that is on the timer.
 def format_time(seconds):
     minutes = seconds // 60
     seconds %= 60
     return f"{minutes:02}:{seconds:02}"
 
 
+# Run the Tetris game.
 def tetris_game(client_socket: socket, username, key):
     pygame.init()
 
@@ -22,7 +24,7 @@ def tetris_game(client_socket: socket, username, key):
     score_rect = pygame.Rect(320, 55, 170, 60)
     next_rect = pygame.Rect(320, 215, 170, 180)
 
-    # Adjust the position of the timer rectangle based on next_rect
+    # Adjust the position of the timer rectangle based on next_rect.
     timer_rect = pygame.Rect(next_rect.left, next_rect.bottom + 50, next_rect.width, 50)
 
     screen = pygame.display.set_mode((500, 620))
@@ -73,10 +75,7 @@ def tetris_game(client_socket: socket, username, key):
             screen.blit(game_over_surface, (520, 650, 50, 50))
             # Game_over|username|score|game_time(in seconds)
             message = '|'.join(["Game_Over", username, str(game.score), str(game.lines), str(int(elapsed_time))])
-            # |lines
             send_message(message, client_socket, key)
-            # server_response = recv_message(client_socket, key)
-            # game_over_surface = title_font.render(f"{server_response}", True, Colors.white)
 
         pygame.draw.rect(screen, Colors.light_blue, score_rect, 0, 10)
         screen.blit(score_value_surface, score_value_surface.get_rect(centerx=score_rect.centerx,
