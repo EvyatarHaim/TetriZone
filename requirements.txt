@@ -1,5 +1,0 @@
-customtkinter
-pygame
-pillow
-pycryptodome
-pycryptodomex
