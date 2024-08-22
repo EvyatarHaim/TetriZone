@@ -94,9 +94,7 @@ TetriZone is a server-client based version of the popular Tetris game. It allows
 - Employed encryption techniques to secure user data.
 - Iteratively refined the UI based on user feedback and usability testing.
 
-## Contribution
 
-We welcome contributions from the community. If you wish to contribute, please fork the repository and submit a pull request.
 
 ## License
 
