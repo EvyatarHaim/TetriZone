@@ -99,12 +99,3 @@ TetriZone is a server-client based version of the popular Tetris game. It allows
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE.txt) file for details.
-
----
-
-## Contact
-
-For any inquiries or support, please contact:
-
-Evyatar Haim  
-Email: evyatarha9@gmail.com
